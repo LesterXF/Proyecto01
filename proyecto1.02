@@ -1,0 +1,30 @@
+﻿
+static void MostrarMenu()
+{
+    Console.WriteLine("\n=== SIMULADOR DE STREAMING ===");
+    Console.WriteLine("1. Evaluar nuevo contenido");
+    Console.WriteLine("2. Mostrar reglas del sistema");
+    Console.WriteLine("3. Mostrar estadisticas");
+    Console.WriteLine("4. Reiniciar estadisticas");
+    Console.WriteLine("5. Salir");
+}
+
+static void EvaluarContenido()
+{
+    // --- Tipo de contenido ---
+    Console.WriteLine("\nTipo de contenido:");
+    Console.WriteLine("1. Pelicula  2. Serie  3. Documental  4. Evento en vivo");
+    Console.Write("Selecciona (1-4): ");
+    int tipo;
+    while (!int.TryParse(Console.ReadLine(), out tipo) || tipo < 1 || tipo > 4)
+    {
+        Console.Write("Valor invalido. Selecciona (1-4): ");
+    }
+
+    // --- Duracion ---
+    Console.Write("Duracion en minutos: ");
+    int duracion;
+    while (!int.TryParse(Console.ReadLine(), out duracion) || duracion < 1)
+    {
+        Console.Write("Valor invalido. Ingresa los minutos: ");
+    }
