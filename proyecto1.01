@@ -1,0 +1,50 @@
+﻿using System;
+
+class Program
+{
+    // Estadisticas de la sesion
+    static int totalEvaluados = 0;
+    static int totalPublicados = 0;
+    static int totalRechazados = 0;
+    static int totalRevision = 0;
+    static int impactoAlto = 0;
+    static int impactoMedio = 0;
+    static int impactoBajo = 0;
+
+    static void Main()
+    {
+        int opcion;
+
+        do
+        {
+            MostrarMenu();
+
+            Console.Write("Selecciona una opcion: ");
+            while (!int.TryParse(Console.ReadLine(), out opcion) || opcion < 1 || opcion > 5)
+            {
+                Console.Write("Opcion invalida. Ingresa un numero del 1 al 5: ");
+            }
+
+            switch (opcion)
+            {
+                case 1:
+                    EvaluarContenido();
+                    break;
+                case 2:
+                    MostrarReglas();
+                    break;
+                case 3:
+                    MostrarEstadisticas();
+                    break;
+                case 4:
+                    ReiniciarEstadisticas();
+                    break;
+                case 5:
+                    Console.WriteLine("\n--- Resumen final ---");
+                    MostrarEstadisticas();
+                    Console.WriteLine("Hasta luego.");
+                    break;
+            }
+
+        } while (opcion != 5);
+    }
