@@ -1,0 +1,125 @@
+﻿//  OPCIÓN 1 — EVALUAR CONTENIDO
+static void EvaluarContenido()
+{
+    Console.WriteLine();
+    Linea('─', 60);
+    Console.WriteLine("           EVALUACIÓN DE NUEVO CONTENIDO");
+    Linea('─', 60);
+
+    // ── Entrada de datos ───────────────────────────────────────────────
+    int tipo = LeerTipoContenido();
+    int duracion = LeerEnteroValido("Duración en minutos: ", 1, 9999);
+    int clasif = LeerClasificacion();
+    int hora = LeerEnteroValido("Hora programada (0-23): ", 0, 23);
+    int produccion = LeerNivelProduccion();
+
+    // ── Textos para el reporte ─────────────────────────────────────────
+    string tipoTexto = ObtenerTextoTipo(tipo);
+    string clasificTexto = ObtenerTextoClasif(clasif);
+    string produccionTexto = ObtenerTextoProduccion(produccion);
+
+    Console.WriteLine();
+    Linea('─', 60);
+    Console.WriteLine("  RESULTADO DE LA EVALUACIÓN");
+    Linea('─', 60);
+    Console.WriteLine($"  Tipo        : {tipoTexto}");
+    Console.WriteLine($"  Duración    : {duracion} min");
+    Console.WriteLine($"  Clasificación: {clasificTexto}");
+    Console.WriteLine($"  Hora        : {hora}:00");
+    Console.WriteLine($"  Producción  : {produccionTexto}");
+    Linea('─', 60);
+
+    // ── a) Validación técnica ──────────────────────────────────────────
+    bool pasa = true;
+    string razonRechazo = "";
+
+    // Validar horario según clasificación
+    if (!ValidarHorario(clasif, hora))
+    {
+        pasa = false;
+        razonRechazo = $"Horario {hora}:00 no permitido para clasificación {clasificTexto}.";
+    }
+
+    // Validar duración según tipo
+    if (pasa && !ValidarDuracion(tipo, duracion))
+    {
+        pasa = false;
+        razonRechazo = $"Duración {duracion} min fuera del rango permitido para {tipoTexto}.";
+    }
+
+    // Validar producción
+    if (pasa && !ValidarProduccion(produccion, clasif))
+    {
+        pasa = false;
+        razonRechazo = $"Producción {produccionTexto} no válida para clasificación {clasificTexto}.";
+    }
+
+    // ── b) Clasificación de impacto ────────────────────────────────────
+    string impacto = "";
+    if (pasa)
+    {
+        impacto = ClasificarImpacto(produccion, duracion, hora);
+        Console.WriteLine($"  Impacto     : {impacto}");
+    }
+
+    // ── c) Decisión final ─────────────────────────────────────────────
+    string decision = "";
+    string razon = "";
+
+    if (!pasa)
+    {
+        decision = "RECHAZAR";
+        razon = razonRechazo;
+    }
+    else if (impacto == "Alto")
+    {
+        decision = "ENVIAR A REVISIÓN";
+        razon = "El contenido tiene impacto Alto.";
+    }
+    else if (impacto == "Bajo" || impacto == "Medio")
+    {
+        // Verificar si necesita ajustes menores
+        bool necesitaAjuste = VerificarAjusteMenor(tipo, duracion, clasif, hora);
+        if (necesitaAjuste)
+        {
+            decision = "PUBLICAR CON AJUSTES";
+            razon = "Cumple reglas técnicas pero requiere ajuste menor de horario o duración.";
+        }
+        else
+        {
+            decision = "PUBLICAR";
+            razon = "Cumple todas las reglas técnicas con impacto " + impacto + ".";
+        }
+    }
+
+    Linea('═', 60);
+    Console.WriteLine($"  DECISIÓN FINAL: {decision}");
+    Console.WriteLine($"  Razón: {razon}");
+    Linea('═', 60);
+
+    // ── Actualizar estadísticas ────────────────────────────────────────
+    ActualizarEstadisticas(decision, impacto);
+
+    Console.WriteLine("\nPresiona ENTER para continuar...");
+    Console.ReadLine();
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  VALIDACIONES TÉCNICAS
+// ════════════════════════════════════════════════════════════════════════
+static bool ValidarHorario(int clasif, int hora)
+{
+    if (clasif == 1) return true;                        // Todo público: siempre
+    if (clasif == 2) return hora >= 6 && hora <= 22;    // +13: 6–22
+    if (clasif == 3) return hora >= 22 || hora <= 5;    // +18: 22–5
+    return false;
+}
+
+static bool ValidarDuracion(int tipo, int duracion)
+{
+    if (tipo == 1) return duracion >= 60 && duracion <= 180;
+    if (tipo == 2) return duracion >= 20 && duracion <= 90;
+    if (tipo == 3) return duracion >= 30 && duracion <= 120;
+    if (tipo == 4) return duracion >= 30 && duracion <= 240;
+    return false;
+}
