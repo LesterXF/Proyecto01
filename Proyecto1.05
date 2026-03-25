@@ -1,0 +1,145 @@
+﻿Console.WriteLine($"  Total evaluados          : {totalEvaluados}");
+Console.WriteLine($"  Publicados               : {totalPublicados}  (incl. con ajustes: {totalPublicadosConAjustes})");
+Console.WriteLine($"  Rechazados               : {totalRechazados}");
+Console.WriteLine($"  En revisión              : {totalRevision}");
+
+// Porcentaje de aprobación
+double porcentaje = totalEvaluados > 0
+    ? Math.Round((double)totalPublicados / totalEvaluados * 100, 1)
+    : 0;
+Console.WriteLine($"  Porcentaje de aprobación : {porcentaje}%");
+
+// Impacto predominante — uso de for para comparar los tres contadores
+string predominante = "N/A";
+int maxImpacto = 0;
+string[] nombresImpacto = { "Alto", "Medio", "Bajo" };
+int[] valoresImpacto = { impactoAltoCount, impactoMedioCount, impactoBajoCount };
+
+for (int i = 0; i < 3; i++)
+{
+    if (valoresImpacto[i] > maxImpacto)
+    {
+        maxImpacto = valoresImpacto[i];
+        predominante = nombresImpacto[i];
+    }
+}
+Console.WriteLine($"  Impacto predominante     : {predominante}");
+
+Linea('═', 60);
+Console.WriteLine("\nPresiona ENTER para continuar...");
+Console.ReadLine();
+    }
+ 
+    //  OPCIÓN 4 — REINICIAR ESTADÍSTICAS
+  
+    static void ReiniciarEstadisticas()
+{
+    Console.Write("\n  ¿Confirmar reinicio de estadísticas? (s/n): ");
+    string resp = Console.ReadLine()?.Trim().ToLower() ?? "n";
+    if (resp == "s")
+    {
+        totalEvaluados = totalPublicados = totalRechazados = totalRevision = 0;
+        totalPublicadosConAjustes = 0;
+        impactoAltoCount = impactoMedioCount = impactoBajoCount = 0;
+        Console.WriteLine("  Estadísticas reiniciadas correctamente.");
+    }
+    else
+    {
+        Console.WriteLine("  Operación cancelada.");
+    }
+    Console.WriteLine("\nPresiona ENTER para continuar...");
+    Console.ReadLine();
+}
+
+//  RESUMEN FINAL AL SALIR
+
+static void MostrarResumenFinal()
+{
+    Console.WriteLine();
+    Linea('═', 60);
+    Console.WriteLine("              RESUMEN FINAL DE LA SESIÓN");
+    Linea('═', 60);
+    Console.WriteLine($"  Total evaluados : {totalEvaluados}");
+    Console.WriteLine($"  Publicados      : {totalPublicados}");
+    Console.WriteLine($"  Rechazados      : {totalRechazados}");
+    Console.WriteLine($"  En revisión     : {totalRevision}");
+    double porcentaje = totalEvaluados > 0
+        ? Math.Round((double)totalPublicados / totalEvaluados * 100, 1)
+        : 0;
+    Console.WriteLine($"  Aprobación      : {porcentaje}%");
+    Linea('═', 60);
+}
+
+//  LECTURA VALIDADA DE ENTRADAS
+
+
+/// <summary>Lee un entero dentro del rango [min, max], reintentando si la entrada no es válida.</summary>
+static int LeerEnteroValido(string mensaje, int min, int max)
+{
+    int valor;
+    bool valido;
+    do
+    {
+        Console.Write("  " + mensaje);
+        valido = int.TryParse(Console.ReadLine(), out valor);
+        if (!valido || valor < min || valor > max)
+        {
+            Console.WriteLine($"  ⚠ Valor inválido. Ingresa un número entre {min} y {max}.");
+            valido = false;
+        }
+    } while (!valido);
+    return valor;
+}
+
+static int LeerTipoContenido()
+{
+    Console.WriteLine("  Tipo de contenido:");
+    Console.WriteLine("    1. Película    2. Serie    3. Documental    4. Evento en vivo");
+    return LeerEnteroValido("Selecciona (1-4): ", 1, 4);
+}
+
+static int LeerClasificacion()
+{
+    Console.WriteLine("  Clasificación:");
+    Console.WriteLine("    1. Todo público    2. +13    3. +18");
+    return LeerEnteroValido("Selecciona (1-3): ", 1, 3);
+}
+
+static int LeerNivelProduccion()
+{
+    Console.WriteLine("  Nivel de producción:");
+    Console.WriteLine("    1. Bajo    2. Medio    3. Alto");
+    return LeerEnteroValido("Selecciona (1-3): ", 1, 3);
+}
+
+//  HELPERS DE TEXTO
+
+{
+    if (tipo == 1) return "Película";
+    if (tipo == 2) return "Serie";
+    if (tipo == 3) return "Documental";
+    return "Evento en vivo";
+}
+
+static string ObtenerTextoClasif(int clasif)
+{
+    if (clasif == 1) return "Todo público";
+    if (clasif == 2) return "+13";
+    return "+18";
+}
+
+static string ObtenerTextoProduccion(int prod)
+{
+    if (prod == 1) return "Baja";
+    if (prod == 2) return "Media";
+    return "Alta";
+}
+
+
+//  UTILIDAD: LÍNEA DECORATIVA
+
+static void Linea(char caracter, int largo)
+{
+    Console.WriteLine(new string(caracter, largo));
+}
+}
